@@ -6,23 +6,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import java.util.List;
+
 /**
  * An activity representing a list of Articles.
  */
-public class MainActivity extends AppCompatActivity implements ArticlesRecyclerAdapter.RecyclerViewOnItemClickListener {
+public class MainActivity extends AppCompatActivity implements ArticlesRecyclerAdapter.ArticlesRecyclerViewOnItemClickListener {
 
-    private static final int NUMBER_OF_ARTICLES = 30;
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        makeArticleTitles();
+        final List<DataView> articles = ContentGenerator.generateContentForViews();
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        final ArticlesRecyclerAdapter adapter = new ArticlesRecyclerAdapter(makeArticleTitles());
-        adapter.setRecyclerViewOnItemClickListener(this);
+        final ArticlesRecyclerAdapter adapter = new ArticlesRecyclerAdapter(articles);
+        adapter.setArticlesRecyclerViewOnItemClickListener(this);
 
         final RecyclerView recyclerView = findViewById(R.id.article_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -30,18 +29,12 @@ public class MainActivity extends AppCompatActivity implements ArticlesRecyclerA
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    private String[] makeArticleTitles() {
-        final String[] articleTitles = new String[NUMBER_OF_ARTICLES];
-
-        for (int i = 0; i < NUMBER_OF_ARTICLES; i++) {
-            articleTitles[i] = "Article number " + i;
-        }
-
-        return articleTitles;
+    public void onItemContentClick(final int position) {
+        Toast.makeText(this, "Item № " + (position + 1) + ".", Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onItemClick(final String item) {
-        Toast.makeText(this, "You clicked on " + item.toLowerCase() + ".", Toast.LENGTH_SHORT).show();
+    public void onItemImageClick(final int position) {
+        Toast.makeText(this, "The position of the article in the list is "
+                + (position + 1) + ".", Toast.LENGTH_LONG).show();
     }
 }
