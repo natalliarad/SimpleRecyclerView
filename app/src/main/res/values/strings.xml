@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SimpleRecyclerView</string>
+    <string name="beautiful_flower_icon">Beautiful flower icon for girls</string>
+    <string name="switch_to_another_screen">Switch to another screen</string>
+    <string name="author_name">Natallia</string>
+    <string name="author_surname">Radaman</string>
+    <string name="no_clicks">No clicks on the items.</string>
 </resources>
