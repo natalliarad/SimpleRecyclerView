@@ -1,28 +1,38 @@
 package com.example.natallia_radaman.simplerecyclerview;
 
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An activity representing a list of Articles.
  */
-public class MainActivity extends AppCompatActivity implements ArticlesRecyclerAdapter.RecyclerViewOnItemClickListener {
+public class MainActivity extends AppCompatActivity implements ArticlesRecyclerAdapter.ClickListenerToActivityCallback {
 
-    private static final int NUMBER_OF_ARTICLES = 30;
+    private static final String KEY_RECYCLER_VIEW = "recyclerView";
+    private List<DataView> articles;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        makeArticleTitles();
-
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        final ArticlesRecyclerAdapter adapter = new ArticlesRecyclerAdapter(makeArticleTitles());
-        adapter.setRecyclerViewOnItemClickListener(this);
+
+        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_RECYCLER_VIEW)) {
+            articles = ContentGenerator.generateContentForViews();
+        } else {
+            articles = savedInstanceState.getParcelableArrayList(KEY_RECYCLER_VIEW);
+        }
+
+        final ArticlesRecyclerAdapter adapter = new ArticlesRecyclerAdapter(articles, this);
 
         final RecyclerView recyclerView = findViewById(R.id.article_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -30,18 +40,15 @@ public class MainActivity extends AppCompatActivity implements ArticlesRecyclerA
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    private String[] makeArticleTitles() {
-        final String[] articleTitles = new String[NUMBER_OF_ARTICLES];
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
 
-        for (int i = 0; i < NUMBER_OF_ARTICLES; i++) {
-            articleTitles[i] = "Article number " + i;
-        }
-
-        return articleTitles;
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(KEY_RECYCLER_VIEW, (ArrayList<? extends Parcelable>) articles);
     }
 
     @Override
-    public void onItemClick(final String item) {
-        Toast.makeText(this, "You clicked on " + item.toLowerCase() + ".", Toast.LENGTH_SHORT).show();
+    public void onCardClickListenerPositionClicked(final int position) {
+        Toast.makeText(this, "You clicked on the element № " + (position - 1) + ". ", Toast.LENGTH_SHORT).show();
     }
 }
